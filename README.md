@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="http://sirdominic.scot/css/sirthisvid.png?v=3" alt="Sir's ThisVid Ripper">
+  <img src="http://sirdominic.scot/css/sirthisvid.png?v=99" alt="Sir's ThisVid Ripper">
   <br><br>
   <img src="http://sirdominic.scot/css/scraperpreview.png" alt="Preview">
   <p align="center">
