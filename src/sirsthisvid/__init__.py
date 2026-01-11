@@ -320,6 +320,34 @@ def ask_choice(prompt, options):
                 return int(choice)
         print("  ⚠️  Invalid choice, try again\n")
 
+def clean_path(path):
+    """Clean up paths from terminal drag-and-drop on Mac/Linux/Windows."""
+    if not path:
+        return path
+    
+    # Remove surrounding quotes (single or double)
+    path = path.strip().strip("'\"")
+    
+    # Handle various escape sequences from different terminals
+    # Mac Terminal and iTerm escape spaces with backslash
+    path = path.replace("\\\\ ", " ")  # Double-escaped spaces
+    path = path.replace("\\ ", " ")    # Single-escaped spaces
+    
+    # Remove remaining escape backslashes (but keep Windows path separators)
+    # Only remove backslashes that are escaping special chars
+    import platform
+    if platform.system() != "Windows":
+        # On Mac/Linux, backslashes are escape chars, not path separators
+        path = path.replace("\\(", "(")
+        path = path.replace("\\)", ")")
+        path = path.replace("\\&", "&")
+        path = path.replace("\\'", "'")
+        path = path.replace("\\!", "!")
+        # Remove any remaining lone backslashes
+        path = path.replace("\\", "")
+    
+    return path
+
 def ask_folder(suggested_name):
     default = os.path.join(os.path.expanduser("~/Desktop"), suggested_name)
     
@@ -328,13 +356,39 @@ def ask_folder(suggested_name):
     print(f"  TIP: Drag a folder here or press Enter for default")
     print()
     
-    folder = input("  → ").strip().strip("'\"")
+    folder = input("  → ").strip()
+    
+    # Clean up the path
+    folder = clean_path(folder)
     
     if not folder:
         folder = default
     
     folder = os.path.expanduser(folder)
-    os.makedirs(folder, exist_ok=True)
+    
+    # Verify the path looks valid
+    if not folder or folder.isspace():
+        print("\n  ⚠️  Invalid path")
+        input("\n  Press Enter to go back...")
+        return None
+    
+    try:
+        os.makedirs(folder, exist_ok=True)
+    except PermissionError:
+        print(f"\n  ❌ Permission denied: {folder}")
+        print("  Try a different folder, or check permissions.")
+        input("\n  Press Enter to go back...")
+        return None
+    except OSError as e:
+        print(f"\n  ❌ Invalid path: {folder}")
+        print(f"  Error: {e}")
+        input("\n  Press Enter to go back...")
+        return None
+    except Exception as e:
+        print(f"\n  ❌ Couldn't create folder: {e}")
+        input("\n  Press Enter to go back...")
+        return None
+    
     return folder
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -379,6 +433,9 @@ def flow_tag():
     print()
     folder = ask_folder(f"{tag}-{orientation}-{sort_type}")
     
+    if not folder:
+        return None
+    
     return {
         'mode': 'tag',
         'last_page': last_page,
@@ -411,6 +468,9 @@ def flow_profile():
     print()
     folder = ask_folder(f"member-{member_id}")
     
+    if not folder:
+        return None
+    
     return {
         'mode': 'profile',
         'last_page': last_page,
@@ -442,6 +502,9 @@ def flow_all_videos():
     print()
     folder = ask_folder(f"{orientation}-newest")
     
+    if not folder:
+        return None
+    
     return {
         'mode': 'all',
         'last_page': last_page,
@@ -457,8 +520,16 @@ def flow_resume():
     print("  Enter the download folder path:")
     print("  TIP: Drag the folder here")
     print()
-    folder = input("  → ").strip().strip("'\"")
+    folder = input("  → ").strip()
+    
+    # Clean up dragged paths
+    folder = clean_path(folder)
     folder = os.path.expanduser(folder)
+    
+    if not folder or not os.path.exists(folder):
+        print("\n  ⚠️  Folder doesn't exist")
+        input("\n  Press Enter to go back...")
+        return None
     
     session = load_session(folder)
     if not session:
@@ -466,7 +537,46 @@ def flow_resume():
         input("\n  Press Enter to go back...")
         return None
     
+    # Restore the url_builder based on session data
+    session['folder'] = folder
+    
+    mode = session.get('mode')
+    if mode == 'tag':
+        # We need to re-parse the description to rebuild the URL
+        # Format: "Tag: tagname (orientation, sort_type)"
+        desc = session.get('description', '')
+        match = re.match(r'Tag: (\S+) \((\w+), (\w+)\)', desc)
+        if match:
+            tag, orientation, sort_type = match.groups()
+            session['url_builder'] = lambda p, t=tag, o=orientation, s=sort_type: build_tag_url(t, o, s, p)
+        else:
+            print("\n  ⚠️  Couldn't restore session settings")
+            input("\n  Press Enter to go back...")
+            return None
+    elif mode == 'profile':
+        desc = session.get('description', '')
+        match = re.match(r'Profile: (\S+)', desc)
+        if match:
+            member_id = match.group(1)
+            session['url_builder'] = lambda p, m=member_id: build_profile_url(m, p)
+        else:
+            print("\n  ⚠️  Couldn't restore session settings")
+            input("\n  Press Enter to go back...")
+            return None
+    elif mode == 'all':
+        desc = session.get('description', '')
+        if 'gay' in desc.lower():
+            orientation = 'gay'
+        else:
+            orientation = 'straight'
+        session['url_builder'] = lambda p, o=orientation: build_all_videos_url(o, p)
+    else:
+        print("\n  ⚠️  Unknown session type")
+        input("\n  Press Enter to go back...")
+        return None
+    
     print(f"\n  ✓ Found session: {session.get('description', 'Unknown')}")
+    return session
     return session
 
 # ═══════════════════════════════════════════════════════════════════════════════

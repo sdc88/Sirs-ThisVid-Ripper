@@ -28,7 +28,7 @@ Requires-Dist: yt-dlp>=2023.1.1
 Dynamic: license-file
 
 <p align="center">
-  <img src="http://sirdominic.scot/css/sirthisvid.png" alt="Sir's ThisVid Ripper">
+  <img src="http://sirdominic.scot/css/thisvidgithublogo.png" alt="Sir's ThisVid Ripper">
   <br><br>
   <img src="http://sirdominic.scot/css/scraperpreview.png" alt="Preview">
   <p align="center">
@@ -86,7 +86,7 @@ When you run `sirsthisvid`, you'll see:
 
 ```
 ═══════════════════════════════════════════════════════════
-  🎬 SIR'S THISVID RIPPER  v2.1.0
+  🎬 SIR'S THISVID RIPPER  v2.0.0
 ═══════════════════════════════════════════════════════════
 
   What do you want to download?
