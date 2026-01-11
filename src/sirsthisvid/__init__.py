@@ -4,7 +4,7 @@ Sir's ThisVid Ripper v2.1.0
 Bulk download videos from ThisVid
 """
 
-__version__ = "2.1.0"
+__version__ = "2.1.1"
 
 import os
 import sys
