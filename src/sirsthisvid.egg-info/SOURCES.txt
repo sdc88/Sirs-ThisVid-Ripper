@@ -1,0 +1,10 @@
+LICENSE
+README.md
+pyproject.toml
+src/sirsthisvid/__init__.py
+src/sirsthisvid.egg-info/PKG-INFO
+src/sirsthisvid.egg-info/SOURCES.txt
+src/sirsthisvid.egg-info/dependency_links.txt
+src/sirsthisvid.egg-info/entry_points.txt
+src/sirsthisvid.egg-info/requires.txt
+src/sirsthisvid.egg-info/top_level.txt

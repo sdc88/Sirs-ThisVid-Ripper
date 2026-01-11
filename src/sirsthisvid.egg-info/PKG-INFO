@@ -1,3 +1,32 @@
+Metadata-Version: 2.4
+Name: sirsthisvid
+Version: 2.0.0
+Summary: Bulk download videos from ThisVid
+Author-email: Sir Dominic Scott <sir@sirdominic.scot>
+License: CC0-1.0
+Project-URL: Homepage, https://github.com/sdc88/Sirs-ThisVid-Ripper
+Project-URL: Repository, https://github.com/sdc88/Sirs-ThisVid-Ripper
+Project-URL: Issues, https://github.com/sdc88/Sirs-ThisVid-Ripper/issues
+Keywords: thisvid,downloader,video,bulk
+Classifier: Development Status :: 4 - Beta
+Classifier: Environment :: Console
+Classifier: Intended Audience :: End Users/Desktop
+Classifier: License :: CC0 1.0 Universal (CC0 1.0) Public Domain Dedication
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Programming Language :: Python :: 3.12
+Classifier: Topic :: Multimedia :: Video
+Requires-Python: >=3.9
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: requests>=2.28.0
+Requires-Dist: beautifulsoup4>=4.11.0
+Requires-Dist: yt-dlp>=2023.1.1
+Dynamic: license-file
+
 # 🎬 Sir's ThisVid Ripper
 
 Bulk download videos from ThisVid. Install once, run from anywhere.
